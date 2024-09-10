@@ -71,7 +71,7 @@ mat4 mat4::rotate(float angle, float x, float y, float z){
         cosR + x *x *(1.0f- cosR),
         y* x *(1.0f - cosR) + z* sinR,
         z* x *(1.0f-cosR)- y * sinR,
-        1.0
+        0.0f
     };
 
     vec4 col1 = vec4{
@@ -256,10 +256,17 @@ vec4 operator*(const vec4 &v, const mat4 &m){
 }
 
 std::ostream &operator<<(std::ostream &o, const mat4 &m){
-    o << fixed << setprecision(1);
-    o<< "{" << m[0][0] <<", "<< m[0][1] << ", "<<m[0][2] <<", "<<m[0][3] <<"\n";
-    o<< " " << m[1][0] <<", "<< m[1][1] << ", "<<m[1][2] <<", "<<m[1][3] << "\n";
-    o<< " " << m[2][0] <<", "<< m[2][1] << ", "<<m[2][2] <<", "<<m[2][3] << "\n";
-    o<< " " << m[3][0] <<", "<< m[3][1] << ", "<<m[3][2] <<", "<<m[3][3] << "}";
+    o << fixed << setprecision(2);
+
+    float epsilon = 1e-6;
+    //ignore -0.0
+    auto formatValue = [&](float value) -> float {
+        return fabs(value) < epsilon ? 0.0f : value;
+    };
+
+    o << "{" << formatValue(m[0][0]) << ", " << formatValue(m[0][1]) << ", " << formatValue(m[0][2]) << ", " << formatValue(m[0][3]) << "\n";
+    o << " " << formatValue(m[1][0]) << ", " << formatValue(m[1][1]) << ", " << formatValue(m[1][2]) << ", " << formatValue(m[1][3]) << "\n";
+    o << " " << formatValue(m[2][0]) << ", " << formatValue(m[2][1]) << ", " << formatValue(m[2][2]) << ", " << formatValue(m[2][3]) << "\n";
+    o << " " << formatValue(m[3][0]) << ", " << formatValue(m[3][1]) << ", " << formatValue(m[3][2]) << ", " << formatValue(m[3][3]) << "}";
     return o;
 }
